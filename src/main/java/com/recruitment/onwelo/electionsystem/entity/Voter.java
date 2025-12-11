@@ -1,6 +1,6 @@
 package com.recruitment.onwelo.electionsystem.entity;
 
-import com.recruitment.onwelo.electionsystem.utils.VoterStatus;
+import com.recruitment.onwelo.electionsystem.entity.enums.VoterStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +26,6 @@ public class Voter {
     private String firstName;
     @NotEmpty
     private String lastName;
-    @Builder.Default
-    VoterStatus status = VoterStatus.ACTIVE;
+
+    private VoterStatus status;
 }

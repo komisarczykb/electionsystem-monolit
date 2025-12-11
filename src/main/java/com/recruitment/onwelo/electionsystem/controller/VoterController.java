@@ -22,14 +22,13 @@ public class VoterController {
 
     @PostMapping
     public ResponseEntity<VoterDto> addNewVoter(@Valid @RequestBody CreateVoterRequest request) {
-        VoterDto createdVoterDto = voterService.createNewVoter(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdVoterDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(voterService.createNewVoter(request));
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<VoterDto> changeVoterStatus(@PathVariable UUID id, @Valid @RequestBody UpdateVoterStatusRequest request) {
-        VoterDto updatedVoterDto = voterService.updateVoterStatus(id, request);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedVoterDto);
+    public ResponseEntity<VoterDto> changeVoterStatus(@PathVariable UUID id,
+                                                      @Valid @RequestBody UpdateVoterStatusRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(voterService.updateVoterStatus(id, request));
     }
 
     @GetMapping

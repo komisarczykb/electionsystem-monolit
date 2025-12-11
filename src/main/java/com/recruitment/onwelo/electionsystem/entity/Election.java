@@ -1,9 +1,6 @@
 package com.recruitment.onwelo.electionsystem.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -12,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -30,4 +29,12 @@ public class Election {
     private LocalDate startDate;
     @NotNull(message = "endDate cannot be null")
     private LocalDate endDate;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "election",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+    )
+    List<ElectionOption> options = new ArrayList<>();
 }
