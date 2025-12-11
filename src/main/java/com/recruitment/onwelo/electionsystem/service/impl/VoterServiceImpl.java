@@ -21,12 +21,11 @@ import java.util.UUID;
 public class VoterServiceImpl implements VoterService {
 
     private final VoterRepository repository;
-    private final VoterMapper voterMapper;
 
     @Override
     @Transactional
     public VoterDto createNewVoter(CreateVoterRequest request) {
-        return voterMapper.toDto(repository.save(voterMapper.toEntity(request)));
+        return VoterMapper.toDto(repository.save(VoterMapper.toEntity(request)));
     }
 
     @Override
@@ -34,13 +33,13 @@ public class VoterServiceImpl implements VoterService {
     public VoterDto updateVoterStatus(UUID id, UpdateVoterStatusRequest request) {
         Voter v = repository.findById(id).orElseThrow(() -> new VoterNotFoundException(id));
         v.setStatus(request.status());
-        return voterMapper.toDto(repository.save(v));
+        return VoterMapper.toDto(repository.save(v));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<VoterDto> getAllVoters() {
         ArrayList<Voter> list = (ArrayList<Voter>) repository.findAll();
-        return list.stream().map(voterMapper::toDto).toList();
+        return list.stream().map(VoterMapper::toDto).toList();
     }
 }

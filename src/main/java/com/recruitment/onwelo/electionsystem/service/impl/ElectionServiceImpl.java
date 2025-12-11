@@ -2,8 +2,10 @@ package com.recruitment.onwelo.electionsystem.service.impl;
 
 import com.recruitment.onwelo.electionsystem.dto.election.CreateElectionRequest;
 import com.recruitment.onwelo.electionsystem.dto.election.ElectionDto;
+import com.recruitment.onwelo.electionsystem.entity.Election;
 import com.recruitment.onwelo.electionsystem.exception.ElectionNotFoundException;
 import com.recruitment.onwelo.electionsystem.mapper.ElectionMapper;
+import com.recruitment.onwelo.electionsystem.mapper.ElectionOptionMapper;
 import com.recruitment.onwelo.electionsystem.repository.ElectionRepository;
 import com.recruitment.onwelo.electionsystem.service.ElectionService;
 import lombok.RequiredArgsConstructor;
@@ -19,17 +21,25 @@ import java.util.UUID;
 public class ElectionServiceImpl implements ElectionService {
 
     private final ElectionRepository electionRepository;
-    private final ElectionMapper electionMapper;
 
     @Override
     public ElectionDto createElection(CreateElectionRequest request) {
-        return electionMapper.toDto(electionRepository.save(electionMapper.toEntity(request)));
+        Election election = Election.builder()
+                .title(request.title())
+                .startDate(request.start())
+                .endDate(request.end())
+                .build();
+
+        request.optionList().forEach(opt -> election.addOption(ElectionOptionMapper.toEntity(opt)));
+
+        Election saved = electionRepository.save(election);
+        return ElectionMapper.toDto(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ElectionDto> getAllElections() {
-        return electionMapper.toDtoList(electionRepository.findAll());
+        return ElectionMapper.toDtoList(electionRepository.findAll());
     }
 
     @Override
@@ -40,6 +50,6 @@ public class ElectionServiceImpl implements ElectionService {
     @Override
     @Transactional(readOnly = true)
     public ElectionDto findElectionById(UUID id) {
-        return electionMapper.toDto(electionRepository.findById(id).orElseThrow(() -> new ElectionNotFoundException(id)));
+        return ElectionMapper.toDto(electionRepository.findById(id).orElseThrow(() -> new ElectionNotFoundException(id)));
     }
 }

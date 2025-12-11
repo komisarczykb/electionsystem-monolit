@@ -1,9 +1,5 @@
 package com.recruitment.onwelo.electionsystem.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.PrimaryKeyJoinColumns;
-
 /*
 @PrimaryKeyJoinColumns({
         @PrimaryKeyJoinColumn(name = "voter", referencedColumnName = "voter_id"),

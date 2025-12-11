@@ -5,6 +5,7 @@ import com.recruitment.onwelo.electionsystem.dto.election.ElectionDto;
 import com.recruitment.onwelo.electionsystem.service.ElectionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +16,14 @@ import java.util.UUID;
 @RequestMapping("/elections/v1")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class ElectionController {
 
     private final ElectionService electionService;
 
     @PostMapping
     public ResponseEntity<ElectionDto> createElection(@Valid @RequestBody CreateElectionRequest request) {
+        log.debug(request.toString());
         return ResponseEntity.status(HttpStatus.CREATED).body(electionService.createElection(request));
     }
 

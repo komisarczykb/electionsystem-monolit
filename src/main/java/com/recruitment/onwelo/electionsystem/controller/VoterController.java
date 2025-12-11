@@ -6,6 +6,7 @@ import com.recruitment.onwelo.electionsystem.dto.voter.VoterDto;
 import com.recruitment.onwelo.electionsystem.service.VoterService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,18 +17,21 @@ import java.util.UUID;
 @RequestMapping("/voters/v1")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class VoterController {
 
     private final VoterService voterService;
 
     @PostMapping
     public ResponseEntity<VoterDto> addNewVoter(@Valid @RequestBody CreateVoterRequest request) {
+        log.debug(request.toString());
         return ResponseEntity.status(HttpStatus.CREATED).body(voterService.createNewVoter(request));
     }
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<VoterDto> changeVoterStatus(@PathVariable UUID id,
                                                       @Valid @RequestBody UpdateVoterStatusRequest request) {
+        log.debug(request.toString());
         return ResponseEntity.status(HttpStatus.OK).body(voterService.updateVoterStatus(id, request));
     }
 

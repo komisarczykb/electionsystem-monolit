@@ -1,10 +1,13 @@
 package com.recruitment.onwelo.electionsystem.dto.election;
 
-import com.recruitment.onwelo.electionsystem.entity.ElectionOption;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public record CreateElectionRequest(LocalDate start, LocalDate end,
-                                    String title, List<ElectionOption> optionList) {
+public record CreateElectionRequest(@NotNull(message = "start date cannot be null") LocalDate start,
+                                    @NotNull(message = "end date cannot be null") LocalDate end,
+                                    @NotNull @Size(min = 5, max = 64, message = "title must be between 5 and 64 characters") String title,
+                                    @NotNull List<CreateElectionOptionRequest> optionList) {
 }

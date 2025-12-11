@@ -24,17 +24,29 @@ public class Election {
     private UUID id;
     @NotNull
     @Size(min = 5, max = 64, message = "Election title must be between 5 and 64 characters")
+    @Column(nullable = false)
     private String title;
     @NotNull(message = "startDate cannot be null")
+    @Column(nullable = false)
     private LocalDate startDate;
     @NotNull(message = "endDate cannot be null")
+    @Column(nullable = false)
     private LocalDate endDate;
 
     @Builder.Default
     @OneToMany(mappedBy = "election",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
     )
     List<ElectionOption> options = new ArrayList<>();
+
+    public void addOption(ElectionOption option) {
+        option.setElection(this);
+        options.add(option);
+    }
+
+    public void addOption(List<ElectionOption> options) {
+        options.forEach(this::addOption);
+    }
 }
