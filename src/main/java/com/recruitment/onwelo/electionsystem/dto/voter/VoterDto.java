@@ -1,4 +1,4 @@
-package com.recruitment.onwelo.electionsystem.service;
+package com.recruitment.onwelo.electionsystem.dto.voter;
 
 import com.recruitment.onwelo.electionsystem.entity.Voter;
 import com.recruitment.onwelo.electionsystem.utils.VoterStatus;
