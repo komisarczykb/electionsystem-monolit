@@ -1,6 +1,6 @@
-package com.onwello.rekrutacja.wybory.repository;
+package com.recruitment.onwelo.electionsystem.repository;
 
-import com.onwello.rekrutacja.wybory.entity.Voter;
+import com.recruitment.onwelo.electionsystem.entity.Voter;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

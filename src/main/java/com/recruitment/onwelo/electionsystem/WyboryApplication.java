@@ -1,4 +1,4 @@
-package com.onwello.rekrutacja.wybory;
+package com.recruitment.onwelo.electionsystem;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

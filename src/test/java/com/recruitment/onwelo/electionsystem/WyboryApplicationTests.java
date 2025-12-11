@@ -1,4 +1,4 @@
-package com.onwello.rekrutacja.wybory;
+package com.recruitment.onwelo.electionsystem;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

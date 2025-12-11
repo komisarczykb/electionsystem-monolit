@@ -1,4 +1,4 @@
-package com.onwello.rekrutacja.wybory.entity;
+package com.recruitment.onwelo.electionsystem.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -8,11 +8,9 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
-@Entity
 public class Election {
     @Id
-    UUID id;
-
-    LocalDate startDate;
-    LocalDate endDate;
+    private UUID id;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }

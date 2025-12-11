@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# specific stuff
+src/main/java/test
+src/main/java/test/*
