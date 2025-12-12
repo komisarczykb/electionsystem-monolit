@@ -10,14 +10,33 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             ElectionNotFoundException.class,
-            VoterNotFoundException.class
+            VoterNotFoundException.class,
+            ElectionOptionNotFoundException.class
     })
-    public ResponseEntity<?> handleFindByIdNotInDatabase(Exception ex) {
+    public ResponseEntity<?> handleNotFound(Exception ex) {
         HttpStatus notFoundStatus = HttpStatus.NOT_FOUND;
         ExceptionDetails details = new ExceptionDetails(ex.getMessage(), notFoundStatus);
         return ResponseEntity.status(notFoundStatus).body(details);
     }
 
-    // Resolved [org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Cannot deserialize value of type `com.recruitment.onwelo.electionsystem.entity.enums.VoterStatus` from String "A": not one of the values accepted for Enum class: [BLOCKED, ACTIVE]]
-    // @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ExceptionHandler(AlreadyVotedException.class)
+    public ResponseEntity<?> handleAlreadyVoted(AlreadyVotedException ex) {
+        HttpStatus conflictStatus = HttpStatus.CONFLICT;
+        ExceptionDetails details = new ExceptionDetails(ex.getMessage(), conflictStatus);
+        return ResponseEntity.status(conflictStatus).body(details);
+    }
+
+    @ExceptionHandler(VoterBlockedException.class)
+    public ResponseEntity<?> handleVoterBlocked(VoterBlockedException ex) {
+        HttpStatus forbiddenStatus = HttpStatus.FORBIDDEN;
+        ExceptionDetails details = new ExceptionDetails(ex.getMessage(), forbiddenStatus);
+        return ResponseEntity.status(forbiddenStatus).body(details);
+    }
+
+    @ExceptionHandler(ElectionNotActiveException.class)
+    public ResponseEntity<?> handleElectionNotActive(ElectionNotActiveException ex) {
+        HttpStatus badRequestStatus = HttpStatus.BAD_REQUEST;
+        ExceptionDetails details = new ExceptionDetails(ex.getMessage(), badRequestStatus);
+        return ResponseEntity.status(badRequestStatus).body(details);
+    }
 }

@@ -36,8 +36,7 @@ public class Election {
     @Builder.Default
     @OneToMany(mappedBy = "election",
             cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER
+            fetch = FetchType.LAZY
     )
     List<ElectionOption> options = new ArrayList<>();
 

@@ -4,12 +4,13 @@ import com.recruitment.onwelo.electionsystem.dto.election.CreateElectionOptionRe
 import com.recruitment.onwelo.electionsystem.dto.election.ElectionOptionDto;
 import com.recruitment.onwelo.electionsystem.entity.Election;
 import com.recruitment.onwelo.electionsystem.entity.ElectionOption;
+import com.recruitment.onwelo.electionsystem.exception.ElectionNotFoundException;
 import com.recruitment.onwelo.electionsystem.mapper.ElectionOptionMapper;
 import com.recruitment.onwelo.electionsystem.repository.ElectionOptionRepository;
+import com.recruitment.onwelo.electionsystem.repository.ElectionRepository;
 import com.recruitment.onwelo.electionsystem.service.ElectionOptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -22,26 +23,34 @@ import java.util.UUID;
 public class ElectionOptionServiceImpl implements ElectionOptionService {
 
     private final ElectionOptionRepository electionOptionRepository;
+    private final ElectionRepository electionRepository;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public List<ElectionOptionDto> addOptionsToElection(Election parentElection, List<CreateElectionOptionRequest> options) {
-        List<ElectionOption> electionOptions = options.stream().map(opt -> ElectionOption.builder()
-                .option(opt.option())
-                .election(parentElection)
-                .build()).toList();
+    public List<ElectionOptionDto> addOptionsToElection(UUID electionId, List<CreateElectionOptionRequest> options) {
+        Election election = electionRepository.findById(electionId)
+                .orElseThrow(() -> new ElectionNotFoundException(electionId));
 
-        return ((List<ElectionOption>) electionOptionRepository.saveAll(electionOptions)).stream().map(ElectionOptionMapper::toDto).toList();
+        List<ElectionOption> electionOptions = options.stream()
+                .map(opt -> ElectionOption.builder()
+                        .option(opt.option())
+                        .election(election)
+                        .build())
+                .toList();
+
+        return ((List<ElectionOption>) electionOptionRepository.saveAll(electionOptions))
+                .stream()
+                .map(ElectionOptionMapper::toDto)
+                .toList();
     }
 
     @Override
     public List<ElectionOptionDto> getOptionsByElectionId(UUID electionId) {
-        return List.of();
+        return electionOptionRepository.findAllByElectionId(electionId).stream().map(ElectionOptionMapper::toDto).toList();
     }
 
     @Override
-    public void deleteOption(UUID electionId, UUID optionId) {
-        return;
+    public void deleteOption(UUID optionId) {
+         electionOptionRepository.deleteById(optionId);
     }
 }
 

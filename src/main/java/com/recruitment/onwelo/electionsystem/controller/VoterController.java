@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,8 +25,17 @@ public class VoterController {
 
     @PostMapping
     public ResponseEntity<VoterDto> addNewVoter(@Valid @RequestBody CreateVoterRequest request) {
-        log.debug(request.toString());
         return ResponseEntity.status(HttpStatus.CREATED).body(voterService.createNewVoter(request));
+    }
+
+    @PostMapping("/bulk")
+    public ResponseEntity<List<VoterDto>> addNewVoters(@Valid @RequestBody List<CreateVoterRequest> requests) {
+        //shall be moved to service or not exist at all, created jsut to make testing easier
+        List<VoterDto> lista = new LinkedList<>();
+        for (CreateVoterRequest req : requests) {
+            lista.add(voterService.createNewVoter(req));
+        }
+        return ResponseEntity.ok(lista);
     }
 
     @PatchMapping("/{id}/status")
@@ -39,4 +49,9 @@ public class VoterController {
     public ResponseEntity<List<VoterDto>> getAllVoters() {
         return ResponseEntity.status(HttpStatus.OK).body(voterService.getAllVoters());
     }
+
+    /*@GetMapping("/{id}")
+    public ResponseEntity<List<VoteRequest>> getAllVoterVotes(@PathVariable UUID userID) {
+        return ResponseEntity.status(HttpStatus.OK).body()
+    }*/
 }
