@@ -9,6 +9,8 @@ import com.recruitment.onwelo.electionsystem.mapper.VoterMapper;
 import com.recruitment.onwelo.electionsystem.repository.VoterRepository;
 import com.recruitment.onwelo.electionsystem.service.VoterService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,16 +20,19 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class VoterServiceImpl implements VoterService {
 
     private final VoterRepository repository;
 
+    @CacheEvict(value = "voters", allEntries = true)
     @Override
     @Transactional
     public VoterDto createNewVoter(CreateVoterRequest request) {
         return VoterMapper.toDto(repository.save(VoterMapper.toEntity(request)));
     }
 
+    @CacheEvict(value = "voters", allEntries = true)
     @Override
     @Transactional
     public VoterDto updateVoterStatus(UUID id, UpdateVoterStatusRequest request) {
@@ -36,8 +41,8 @@ public class VoterServiceImpl implements VoterService {
         return VoterMapper.toDto(repository.save(v));
     }
 
+    @Cacheable(value = "voters")
     @Override
-    @Transactional(readOnly = true)
     public List<VoterDto> getAllVoters() {
         ArrayList<Voter> list = (ArrayList<Voter>) repository.findAll();
         return list.stream().map(VoterMapper::toDto).toList();

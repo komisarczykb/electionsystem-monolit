@@ -16,6 +16,8 @@ import com.recruitment.onwelo.electionsystem.repository.VoterRepository;
 import com.recruitment.onwelo.electionsystem.service.VoteService;
 import com.recruitment.onwelo.electionsystem.util.ElectionDateUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class VoteServiceImpl implements VoteService {
 
@@ -33,7 +35,9 @@ public class VoteServiceImpl implements VoteService {
     private final ElectionRepository electionRepository;
     private final ElectionOptionRepository electionOptionRepository;
 
+    @CacheEvict(value = "electionVotes", key = "#electionId")
     @Override
+    @Transactional
     public void vote(UUID electionId, VoteRequest request) {
         Voter voter = voterRepository.findById(request.voterId())
                 .orElseThrow(() -> new VoterNotFoundException(request.voterId()));
@@ -63,15 +67,14 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public VoteCountDto getVoteCount(UUID electionId) {
         if (!electionRepository.existsById(electionId)) throw new ElectionNotFoundException(electionId);
 
         return new VoteCountDto(electionId, electionVotesRepository.countByElectionId(electionId));
     }
 
+    @Cacheable(value = "electionVotes", key = "#electionId")
     @Override
-    @Transactional(readOnly = true)
     public List<ElectionVoteDto> getAllVotes(UUID electionId) {
         if (!electionRepository.existsById(electionId)) throw new ElectionNotFoundException(electionId);
 

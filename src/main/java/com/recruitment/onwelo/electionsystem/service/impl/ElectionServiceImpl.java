@@ -9,6 +9,9 @@ import com.recruitment.onwelo.electionsystem.mapper.ElectionOptionMapper;
 import com.recruitment.onwelo.electionsystem.repository.ElectionRepository;
 import com.recruitment.onwelo.electionsystem.service.ElectionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,13 +19,15 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ElectionServiceImpl implements ElectionService {
 
     private final ElectionRepository electionRepository;
 
+    @CacheEvict(value = "elections", allEntries = true)
     @Override
+    @Transactional
     public ElectionDto createElection(CreateElectionRequest request) {
         Election election = Election.builder()
                 .title(request.title())
@@ -36,19 +41,26 @@ public class ElectionServiceImpl implements ElectionService {
         return ElectionMapper.toDto(saved);
     }
 
+    @Cacheable(value = "elections")
     @Override
-    @Transactional(readOnly = true)
     public List<ElectionDto> getAllElections() {
         return ElectionMapper.toDtoList(electionRepository.findAll());
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "elections", allEntries = true),
+            @CacheEvict(value = "electionById", key = "#id"),
+            @CacheEvict(value = "electionOptions", key = "#id"),
+            @CacheEvict(value = "electionVotes", key = "#id")
+    })
     @Override
+    @Transactional
     public void deleteElectionById(UUID id) {
         electionRepository.findById(id).ifPresent(electionRepository::delete);
     }
 
+    @Cacheable(value = "electionById", key = "#id")
     @Override
-    @Transactional(readOnly = true)
     public ElectionDto findElectionById(UUID id) {
         return ElectionMapper.toDto(electionRepository.findById(id).orElseThrow(() -> new ElectionNotFoundException(id)));
     }

@@ -10,6 +10,9 @@ import com.recruitment.onwelo.electionsystem.repository.ElectionOptionRepository
 import com.recruitment.onwelo.electionsystem.repository.ElectionRepository;
 import com.recruitment.onwelo.electionsystem.service.ElectionOptionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,14 +21,19 @@ import java.util.UUID;
 
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ElectionOptionServiceImpl implements ElectionOptionService {
 
     private final ElectionOptionRepository electionOptionRepository;
     private final ElectionRepository electionRepository;
 
+    @Caching(evict = {
+            @CacheEvict(value = "electionOptions", key = "#electionId"),
+            @CacheEvict(value = "electionById", key = "#electionId")
+    })
     @Override
+    @Transactional
     public List<ElectionOptionDto> addOptionsToElection(UUID electionId, List<CreateElectionOptionRequest> options) {
         Election election = electionRepository.findById(electionId)
                 .orElseThrow(() -> new ElectionNotFoundException(electionId));
@@ -43,12 +51,15 @@ public class ElectionOptionServiceImpl implements ElectionOptionService {
                 .toList();
     }
 
+    @Cacheable(value = "electionOptions", key = "#electionId")
     @Override
     public List<ElectionOptionDto> getOptionsByElectionId(UUID electionId) {
         return electionOptionRepository.findAllByElectionId(electionId).stream().map(ElectionOptionMapper::toDto).toList();
     }
 
+    @CacheEvict(value = "electionOptions", allEntries = true)
     @Override
+    @Transactional
     public void deleteOption(UUID optionId) {
          electionOptionRepository.deleteById(optionId);
     }
