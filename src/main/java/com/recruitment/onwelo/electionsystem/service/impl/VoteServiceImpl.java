@@ -14,6 +14,7 @@ import com.recruitment.onwelo.electionsystem.repository.ElectionRepository;
 import com.recruitment.onwelo.electionsystem.repository.ElectionVotesRepository;
 import com.recruitment.onwelo.electionsystem.repository.VoterRepository;
 import com.recruitment.onwelo.electionsystem.service.VoteService;
+import com.recruitment.onwelo.electionsystem.util.ElectionDateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,8 +43,7 @@ public class VoteServiceImpl implements VoteService {
         Election election = electionRepository.findById(electionId)
                 .orElseThrow(() -> new ElectionNotFoundException(electionId));
 
-        if (LocalDate.now().isBefore(election.getStartDate()) || LocalDate.now().isAfter(election.getEndDate()))
-            throw new ElectionNotActiveException(electionId);
+        if (!ElectionDateUtils.isInValidVotingWindow(election)) throw new ElectionNotActiveException(electionId);
 
         if (electionVotesRepository.existsByVoterIdAndElectionId(request.voterId(), electionId))
             throw new AlreadyVotedException(request.voterId(), electionId);

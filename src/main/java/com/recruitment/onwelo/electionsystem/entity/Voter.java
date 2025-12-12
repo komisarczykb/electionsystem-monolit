@@ -26,5 +26,6 @@ public class Voter {
     @Column(nullable = false)
     private String lastName;
     @Column(nullable = false)
-    private VoterStatus status;
+    @Builder.Default
+    private VoterStatus status = VoterStatus.ACTIVE;
 }
