@@ -8,7 +8,7 @@
 		<version>4.0.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.onwello.rekrutacja</groupId>
+	<groupId>me.bartoszkomisarczyk</groupId>
 	<artifactId>wybory</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>wybory</name>
@@ -73,7 +73,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-                    <mainClass>com.recruitment.onwelo.electionsystem.WyboryApplication</mainClass>
+                    <mainClass>me.bartoszkomisarczyk.electionsystem.WyboryApplication</mainClass>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
